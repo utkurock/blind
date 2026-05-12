@@ -93,6 +93,9 @@ export default function Page() {
   const bankRef = useRef<Wallet | null>(null);
   const cycleRunningRef = useRef(false);
   const bufferedRoundRef = useRef<DrandRound | null>(null);
+  // auto-pause for AFK users: every 20 trades since the user last hit play, stop and wait for them
+  const tradesSincePlayRef = useRef(0);
+  const AUTO_PAUSE_AFTER = 20;
 
   playingRef.current = playing;
   balanceRef.current = balance;
@@ -104,6 +107,11 @@ export default function Page() {
   // when user pauses while idle, drop the trailing settled card so the panel resets
   useEffect(() => {
     if (!playing && !cycleRunningRef.current) setLastSettled(null);
+  }, [playing]);
+
+  // reset the AFK counter every time the user actively starts playing again
+  useEffect(() => {
+    if (playing) tradesSincePlayRef.current = 0;
   }, [playing]);
 
   // Hydrate from localStorage
@@ -128,11 +136,19 @@ export default function Page() {
     }
   }, []);
 
-  // Initial chart seed from drand /feed so it isn't empty before the first trade
+  // Initial chart seed: real BTC klines so the resting state looks like a real market
+  // (and not a synthetic curve). If the fetch fails we fall back to drand-derived candles.
   useEffect(() => {
     if (!hydrated) return;
     let cancelled = false;
     (async () => {
+      const klines = await fetchKlines(ASSET_SYMBOL.BTC, 100);
+      if (cancelled) return;
+      if (klines.length > 0) {
+        chartRef.current?.setSeed(klines);
+        return;
+      }
+      // fallback — keeps the chart from being empty if Binance/OKX are unreachable
       const feed = await fetchFeed();
       if (cancelled || feed.length === 0) return;
       const sorted = [...feed].sort((a, b) => a.round - b.round);
@@ -388,6 +404,12 @@ export default function Page() {
         await sleep(PHASE.settleHoldMs);
       }
 
+      // AFK guard: stop after AUTO_PAUSE_AFTER trades since the last manual play
+      tradesSincePlayRef.current += 1;
+      if (tradesSincePlayRef.current >= AUTO_PAUSE_AFTER) {
+        setPlaying(false);
+      }
+
       // ----- cooldown -----
       setCyclePhase("cooldown");
       await sleep(PHASE.cooldownMs);
@@ -528,13 +550,13 @@ export default function Page() {
           />
         </section>
 
-        <aside className="col-span-12 h-[40vh] min-h-0 lg:col-span-4 lg:h-auto">
+        <aside className="col-span-12 h-[19rem] min-h-0 lg:col-span-4 lg:h-auto">
           <HistoryList items={history} playPublicKey={play?.publicKey ?? null} />
         </aside>
       </div>
 
       <footer className="border-t border-line/60 px-4 pb-3 pt-4 sm:px-6 sm:pb-4 sm:pt-5">
-        <div className="flex flex-col items-start justify-between gap-1 font-mono text-[10px] lowercase tracking-[0.2em] text-dim sm:flex-row sm:items-center sm:gap-0">
+        <div className="flex flex-col items-center justify-between gap-1 text-center font-mono text-[10px] lowercase tracking-[0.2em] text-dim sm:flex-row sm:items-center sm:text-left sm:gap-0">
           <span>
             powered by{" "}
             <a

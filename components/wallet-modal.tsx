@@ -101,8 +101,14 @@ export function WalletModal({
   const destValid = dest.length > 0 && isValidPublicKey(dest);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 px-3 py-4 backdrop-blur sm:items-center sm:px-4">
-      <div className="panel-soft max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl p-5 sm:p-6">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 px-3 py-4 backdrop-blur sm:items-center sm:px-4"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="panel-soft max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl p-5 sm:p-6"
+      >
         <div className="mb-4 flex items-center justify-between">
           <span className="tag">wallet</span>
           <button onClick={onClose} className="pill">close</button>

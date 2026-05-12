@@ -108,38 +108,93 @@ export function SpinModal({ open, currentPalette, currentChartStyle, onClose, on
     const pTarget = pickPaletteIndex(r.randomness);
     const sTarget = pickChartStyleIndex(r.randomness);
 
-    let delay = 55;
-    let i = hiPalette;
-    let j = hiStyle;
-    let stepsLeft = 24 + ((pTarget - i + PALETTES.length) % PALETTES.length);
+    // Two-stage spin. Palette row spins first and lands, then the chart-style row
+    // spins and lands. Each stage eases out into its target.
+    const PALETTE_MS = 1800;
+    const STYLE_GAP_MS = 250; // brief breath between the two stages
+    const STYLE_MS = 1400;
 
-    const tick = () => {
-      if (cancelRef.current) return;
-      i = (i + 1) % PALETTES.length;
-      j = (j + 1) % CHART_STYLES.length; // cycle styles too
-      setHiPalette(i);
-      setHiStyle(j);
-      stepsLeft -= 1;
-      if (stepsLeft <= 0 && i === pTarget) {
-        // land both at the same moment
-        const p = PALETTES[pTarget];
-        const s = CHART_STYLES[sTarget];
-        setHiStyle(sTarget);
-        setChosenPalette(p);
-        setChosenStyle(s);
-        setPhase("chose");
-        onApply(p, s);
-        return;
-      }
-      delay = Math.min(260, delay + 8);
-      setTimeout(tick, delay);
+    const finish = () => {
+      const p = PALETTES[pTarget];
+      const s = CHART_STYLES[sTarget];
+      setHiPalette(pTarget);
+      setHiStyle(sTarget);
+      setChosenPalette(p);
+      setChosenStyle(s);
+      setPhase("chose");
+      onApply(p, s);
     };
-    setTimeout(tick, delay);
+
+    // ----- stage 1: palette -----
+    const paletteStart = performance.now();
+    let pi = hiPalette;
+
+    const tickPalette = () => {
+      if (cancelRef.current) return;
+      const elapsed = performance.now() - paletteStart;
+      const progress = Math.min(1, elapsed / PALETTE_MS);
+
+      if (progress >= 0.75) {
+        // lock-in tail: walk straight to target
+        const dist = (pTarget - pi + PALETTES.length) % PALETTES.length;
+        if (dist === 0) {
+          setHiPalette(pTarget);
+          setTimeout(tickStyle, STYLE_GAP_MS);
+          return;
+        }
+        pi = (pi + 1) % PALETTES.length;
+        setHiPalette(pi);
+      } else {
+        pi = (pi + 1) % PALETTES.length;
+        setHiPalette(pi);
+      }
+
+      const interval = 55 + progress * progress * 110;
+      setTimeout(tickPalette, interval);
+    };
+
+    // ----- stage 2: chart style -----
+    let styleStartTs = 0;
+    let si = hiStyle;
+
+    const tickStyle = () => {
+      if (cancelRef.current) return;
+      if (styleStartTs === 0) styleStartTs = performance.now();
+      const elapsed = performance.now() - styleStartTs;
+      const progress = Math.min(1, elapsed / STYLE_MS);
+
+      if (progress >= 0.7) {
+        const dist = (sTarget - si + CHART_STYLES.length) % CHART_STYLES.length;
+        if (dist === 0) {
+          finish();
+          return;
+        }
+        si = (si + 1) % CHART_STYLES.length;
+        setHiStyle(si);
+      } else {
+        si = (si + 1) % CHART_STYLES.length;
+        setHiStyle(si);
+      }
+
+      const interval = 90 + progress * progress * 140;
+      setTimeout(tickStyle, interval);
+    };
+
+    setTimeout(tickPalette, 50);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 px-3 py-4 backdrop-blur sm:items-center sm:px-4">
-      <div className="panel-soft max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl p-5 sm:p-6">
+    <div
+      onClick={() => {
+        cancelRef.current = true;
+        onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 px-3 py-4 backdrop-blur sm:items-center sm:px-4"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="panel-soft max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl p-5 sm:p-6"
+      >
         <div className="mb-3 flex items-center justify-between">
           <span className="tag">palette spin</span>
           <button

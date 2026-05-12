@@ -154,8 +154,21 @@ export const Chart = forwardRef<ChartHandle, { paletteId?: string; chartStyle?: 
           fontFamily: "JetBrains Mono, monospace",
         },
         grid: { vertLines: { color: t.grid }, horzLines: { color: t.grid } },
-        rightPriceScale: { borderColor: t.border },
-        timeScale: { borderColor: t.border, timeVisible: true, secondsVisible: true },
+        rightPriceScale: { borderColor: t.border, autoScale: true },
+        timeScale: {
+          borderColor: t.border,
+          timeVisible: true,
+          secondsVisible: true,
+          fixLeftEdge: true,
+          rightOffset: 6,
+        },
+        handleScale: {
+          axisPressedMouseMove: false,
+          mouseWheel: false,
+          pinch: false,
+          axisDoubleClickReset: true,
+        },
+        handleScroll: false,
         crosshair: {
           mode: CrosshairMode.Normal,
           vertLine: { color: t.crosshair, labelBackgroundColor: t.crosshairLabel },
@@ -172,6 +185,8 @@ export const Chart = forwardRef<ChartHandle, { paletteId?: string; chartStyle?: 
             width: containerRef.current.clientWidth,
             height: containerRef.current.clientHeight,
           });
+          // re-fit so resizes (and pane shrinks) never leave the chart half-rendered
+          chartRef.current.timeScale().fitContent();
         }
       });
       ro.observe(containerRef.current);
