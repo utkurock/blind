@@ -1,0 +1,445 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+/* ---------- PALETTE TOKENS (rgb triplets so Tailwind can compose alpha) ---------- */
+
+:root,
+[data-palette="noir"] {
+  --c-bg:     8 9 12;
+  --c-panel:  14 16 20;
+  --c-line:   28 31 37;
+  --c-dim:    96 99 108;
+  --c-muted:  138 140 146;
+  --c-ink:    232 228 216;
+  --c-long:   134 217 160;
+  --c-short:  232 122 153;
+  --grain-opacity: 0.06;
+  --vignette: 0.55;
+  color-scheme: dark;
+}
+
+[data-palette="paper"] {
+  --c-bg:     244 240 230;
+  --c-panel:  254 250 238;
+  --c-line:   190 184 168;
+  --c-dim:     80  76  70;
+  --c-muted:   46  44  40;
+  --c-ink:      0   0   0;
+  --c-long:    32 130  74;
+  --c-short:  176  52  88;
+  --grain-opacity: 0.04;
+  --vignette: 0.10;
+  color-scheme: light;
+}
+
+[data-palette="terminal"] {
+  --c-bg:     2 6 2;
+  --c-panel:  10 15 10;
+  --c-line:   18 32 18;
+  --c-dim:    60 92 60;
+  --c-muted:  100 140 100;
+  --c-ink:    124 255 179;
+  --c-long:   168 255 96;
+  --c-short:  255 200 87;
+  --grain-opacity: 0.10;
+  --vignette: 0.70;
+  color-scheme: dark;
+}
+
+[data-palette="midnight"] {
+  --c-bg:     10 15 31;
+  --c-panel:  16 23 41;
+  --c-line:   28 38 60;
+  --c-dim:    90 105 130;
+  --c-muted:  130 145 170;
+  --c-ink:    230 236 242;
+  --c-long:   122 184 255;
+  --c-short:  255 122 138;
+  --grain-opacity: 0.05;
+  --vignette: 0.55;
+  color-scheme: dark;
+}
+
+[data-palette="rust"] {
+  --c-bg:     27 19 15;
+  --c-panel:  35 23 15;
+  --c-line:   60 38 25;
+  --c-dim:    138 100 70;
+  --c-muted:  178 138 100;
+  --c-ink:    240 217 181;
+  --c-long:   232 160 74;
+  --c-short:  212 81 60;
+  --grain-opacity: 0.08;
+  --vignette: 0.50;
+  color-scheme: dark;
+}
+
+[data-palette="mono"] {
+  --c-bg:     16 16 18;
+  --c-panel:  23 24 27;
+  --c-line:   38 40 44;
+  --c-dim:    110 112 118;
+  --c-muted:  158 160 166;
+  --c-ink:    242 242 242;
+  --c-long:   216 216 216;
+  --c-short:  122 122 122;
+  --grain-opacity: 0.05;
+  --vignette: 0.45;
+  color-scheme: dark;
+}
+
+[data-palette="kodak"] {
+  --c-bg:     26 19 10;
+  --c-panel:  35 26 14;
+  --c-line:   60 44 24;
+  --c-dim:    142 110 80;
+  --c-muted:  180 148 116;
+  --c-ink:    238 222 194;
+  --c-long:   228 176 70;
+  --c-short:  194 74 136;
+  --grain-opacity: 0.10;
+  --vignette: 0.45;
+  color-scheme: dark;
+}
+
+[data-palette="vapor"] {
+  --c-bg:     14 8 32;
+  --c-panel:  22 16 47;
+  --c-line:   44 32 80;
+  --c-dim:    130 100 180;
+  --c-muted:  170 140 220;
+  --c-ink:    242 217 255;
+  --c-long:   118 224 255;
+  --c-short:  255 111 181;
+  --grain-opacity: 0.07;
+  --vignette: 0.45;
+  color-scheme: dark;
+}
+
+[data-palette="fjord"] {
+  --c-bg:     12 20 27;
+  --c-panel:  16 25 31;
+  --c-line:   32 48 60;
+  --c-dim:    96 122 138;
+  --c-muted:  142 168 184;
+  --c-ink:    221 233 240;
+  --c-long:   111 184 194;
+  --c-short:  232 132 154;
+  --grain-opacity: 0.05;
+  --vignette: 0.40;
+  color-scheme: dark;
+}
+
+[data-palette="forest"] {
+  --c-bg:     10 19 13;
+  --c-panel:  15 26 17;
+  --c-line:   28 50 32;
+  --c-dim:    90 124 90;
+  --c-muted:  138 168 138;
+  --c-ink:    232 224 206;
+  --c-long:   125 202 138;
+  --c-short:  216 106 106;
+  --grain-opacity: 0.06;
+  --vignette: 0.50;
+  color-scheme: dark;
+}
+
+html, body {
+  background: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.font-display {
+  font-family: "Archivo Black", ui-sans-serif, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-editorial {
+  font-family: "Fraunces", "Times New Roman", serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- atmospheric backdrop: grain + soft vignette, no accent tint ---------- */
+
+.bg-noir {
+  position: relative;
+  background:
+    radial-gradient(1100px 600px at 18% 8%,  rgb(var(--c-ink) / 0.025), transparent 60%),
+    radial-gradient(900px  520px at 86% 12%, rgb(var(--c-ink) / 0.020), transparent 60%),
+    rgb(var(--c-bg));
+}
+.bg-noir::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+}
+.bg-noir::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--vignette)) 100%);
+}
+.bg-noir > * { position: relative; z-index: 1; }
+
+/* ---------- terminal-style section tag: ~/name (neutral, no mustard) ---------- */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 9999px;
+  background: rgb(var(--c-ink) / 0.05);
+  color: rgb(var(--c-ink) / 0.85);
+  border: 1px solid rgb(var(--c-ink) / 0.08);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+}
+.tag::before { content: none; }
+
+.label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+  color: rgb(var(--c-dim));
+}
+
+/* ---------- panels ---------- */
+
+.panel-soft {
+  background:
+    linear-gradient(180deg, rgb(var(--c-ink) / 0.012), transparent 40%),
+    rgb(var(--c-panel));
+  box-shadow:
+    inset 0 1px 0 rgb(var(--c-ink) / 0.04),
+    inset 0 0 0 1px rgb(var(--c-ink) / 0.025),
+    0 30px 80px -40px rgb(0 0 0 / 0.7);
+}
+
+@keyframes flipIn {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.985); filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0)   scale(1);     filter: blur(0); }
+}
+.flip-in { animation: flipIn 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* live border around the open trade — neutral breathing ring, no glow color */
+@keyframes liveRing {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--c-ink) / 0.08),
+      0 0 24px rgb(var(--c-ink) / 0.04);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--c-ink) / 0.22),
+      0 0 32px rgb(var(--c-ink) / 0.09);
+  }
+}
+.live-ring { animation: liveRing 2.2s ease-in-out infinite; }
+
+/* ---------- pill buttons ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid rgb(var(--c-ink) / 0.12);
+  background: rgb(var(--c-ink) / 0.02);
+  color: rgb(var(--c-ink));
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  transition: all 180ms ease;
+}
+.pill:hover:not(:disabled) {
+  border-color: rgb(var(--c-ink) / 0.28);
+  background: rgb(var(--c-ink) / 0.05);
+}
+.pill:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.pill-long {
+  border-color: rgb(var(--c-long) / 0.55);
+  color: rgb(var(--c-long));
+  background: rgb(var(--c-long) / 0.06);
+}
+.pill-long:hover:not(:disabled) {
+  background: rgb(var(--c-long) / 0.12);
+  box-shadow: 0 0 22px rgb(var(--c-long) / 0.18);
+}
+
+.pill-short {
+  border-color: rgb(var(--c-short) / 0.55);
+  color: rgb(var(--c-short));
+  background: rgb(var(--c-short) / 0.06);
+}
+.pill-short:hover:not(:disabled) {
+  background: rgb(var(--c-short) / 0.12);
+  box-shadow: 0 0 22px rgb(var(--c-short) / 0.18);
+}
+
+/* text glow modifiers — neutral or directional */
+.text-glow-long  { text-shadow: 0 0 10px rgb(var(--c-long)  / 0.40), 0 0 22px rgb(var(--c-long)  / 0.18); }
+.text-glow-short { text-shadow: 0 0 10px rgb(var(--c-short) / 0.40), 0 0 22px rgb(var(--c-short) / 0.18); }
+.text-glow-soft  { text-shadow: 0 0 18px rgb(var(--c-ink)   / 0.14); }
+
+[data-palette="paper"] .text-glow-soft { text-shadow: none; }
+[data-palette="paper"] .text-glow-long,
+[data-palette="paper"] .text-glow-short { text-shadow: none; }
+
+/* ===================================================================
+   paper palette — full nuclear-grade contrast overrides.
+   Tailwind utilities via var(--c-ink) sometimes don't resolve through
+   browser caches, so we hardcode literal colors with !important here.
+   =================================================================== */
+
+/* kill atmospheric overlays that wash out text on cream */
+[data-palette="paper"].bg-noir::before { mix-blend-mode: normal !important; opacity: 0.025 !important; }
+[data-palette="paper"].bg-noir::after  { background: none !important; }
+[data-palette="paper"] header { backdrop-filter: none !important; }
+
+/* base body color so any inherited text stays black */
+[data-palette="paper"], [data-palette="paper"] body { color: #000 !important; }
+
+/* force-black text utilities */
+[data-palette="paper"] .text-ink,
+[data-palette="paper"] .text-cream { color: #000 !important; }
+
+[data-palette="paper"] .text-dim    { color: rgb(48 44 40) !important; }
+[data-palette="paper"] .text-muted  { color: rgb(28 26 22) !important; }
+
+[data-palette="paper"] .text-dim\/70 { color: rgb(48 44 40 / 0.78) !important; }
+[data-palette="paper"] .text-dim\/60 { color: rgb(48 44 40 / 0.68) !important; }
+[data-palette="paper"] .text-dim\/30 { color: rgb(48 44 40 / 0.38) !important; }
+[data-palette="paper"] .text-ink\/80 { color: rgb(0 0 0 / 0.85) !important; }
+
+/* tag pills: black background, white text */
+[data-palette="paper"] .tag {
+  background: #000 !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+[data-palette="paper"] .tag::before { color: #fff !important; }
+
+/* default pills — black border, black text on near-white bg */
+[data-palette="paper"] .pill {
+  background: #fffaf0 !important;
+  border-color: #000 !important;
+  color: #000 !important;
+}
+[data-palette="paper"] .pill:hover:not(:disabled) {
+  background: #f1ecd8 !important;
+  border-color: #000 !important;
+}
+/* play/win and pause/loss pills keep their accent */
+[data-palette="paper"] .pill.pill-long {
+  background: rgb(32 130 74 / 0.10) !important;
+  border-color: rgb(32 130 74) !important;
+  color: rgb(20 96 54) !important;
+}
+[data-palette="paper"] .pill.pill-short {
+  background: rgb(176 52 88 / 0.10) !important;
+  border-color: rgb(176 52 88) !important;
+  color: rgb(140 38 70) !important;
+}
+
+/* labels: dark mid-gray for hierarchy without losing readability */
+[data-palette="paper"] .label {
+  color: rgb(48 44 40) !important;
+  font-weight: 500 !important;
+}
+
+/* panel hairline borders */
+[data-palette="paper"] .panel-soft {
+  background: #fffaf0 !important;
+  box-shadow:
+    inset 0 1px 0 rgb(0 0 0 / 0.05),
+    inset 0 0 0 1px rgb(0 0 0 / 0.22),
+    0 24px 60px -30px rgb(0 0 0 / 0.10) !important;
+}
+[data-palette="paper"] .h-divider {
+  background: linear-gradient(90deg, transparent, rgb(0 0 0 / 0.45), transparent) !important;
+}
+
+/* live ring */
+[data-palette="paper"] .live-ring { animation-name: liveRingLight !important; }
+@keyframes liveRingLight {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.32), 0 0 28px rgb(0 0 0 / 0.05); }
+  50%      { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.70), 0 0 36px rgb(0 0 0 / 0.12); }
+}
+
+/* glow text shadows are noise on white */
+[data-palette="paper"] .text-glow-long,
+[data-palette="paper"] .text-glow-short,
+[data-palette="paper"] .text-glow-soft { text-shadow: none !important; }
+
+/* risk track + dots — explicit overrides so alpha-based utilities don't wash on light themes */
+[data-palette="paper"] .risk-track {
+  background: #fffaf0 !important;
+  border-color: rgb(0 0 0 / 0.55) !important;
+}
+[data-palette="paper"] .risk-track:hover:not(:disabled) {
+  border-color: #000 !important;
+}
+[data-palette="paper"] .risk-dot {
+  background: rgb(0 0 0 / 0.45) !important;
+}
+[data-palette="paper"] .risk-dot.risk-dot-on {
+  background: #000 !important;
+}
+
+/* divider — neutral */
+.h-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--c-ink) / 0.14), transparent);
+}
+
+/* risk track base — palette-aware via var(--c-ink) */
+.risk-track {
+  background: rgb(var(--c-ink) / 0.04);
+}
+.risk-dot {
+  background: rgb(var(--c-ink) / 0.55);
+}
+.risk-dot.risk-dot-on {
+  background: rgb(var(--c-ink));
+}
+
+/* hide scrollbar for narrow panels */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* mobile touch targets — pills become a touch bigger and tap-friendly */
+@media (max-width: 640px) {
+  .pill {
+    padding: 0.55rem 0.9rem;
+    font-size: 11px;
+  }
+  .tag { padding: 0.22rem 0.6rem; }
+}
