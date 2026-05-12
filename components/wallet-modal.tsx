@@ -93,6 +93,7 @@ export function WalletModal({
   const [dest, setDest] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [revealSecrets, setRevealSecrets] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
 
   if (!open) return null;
 
@@ -147,50 +148,47 @@ export function WalletModal({
               {revealSecrets ? "hide secret keys" : "reveal secret keys"}
             </button>
 
-            <div className="h-divider mt-6" />
-
-            <div className="mt-5">
-              <span className="tag">withdraw</span>
-              <p className="mt-2 text-[11px] text-muted">
-                all testnet XLM in play and bank is sent to the destination. no tx hash
-                shown here — it lands quietly.
-              </p>
-              <input
-                type="text"
-                placeholder="g... destination address"
-                value={dest}
-                onChange={(e) => setDest(e.target.value.trim())}
-                className="mt-3 w-full rounded-md border border-line bg-bg/40 px-3 py-2 font-mono text-xs text-ink outline-none focus:border-ink/60"
-              />
-              <button
-                type="button"
-                disabled={!destValid || phase === "withdrawing"}
-                onClick={async () => {
-                  setPhase("withdrawing");
-                  await onWithdraw(dest);
-                  setPhase("idle");
-                  setDest("");
-                }}
-                className="pill pill-short mt-3 w-full justify-center py-2.5"
-              >
-                {phase === "withdrawing" ? "sending…" : "send all"}
-              </button>
-            </div>
-
             <button
               type="button"
-              onClick={() => {
-                if (
-                  confirm(
-                    "Wipe local wallets and history? Any XLM in these accounts is gone.",
-                  )
-                )
-                  onWipe();
-              }}
-              className="mt-5 w-full font-mono text-[10px] uppercase tracking-[0.25em] text-dim hover:text-short"
+              onClick={() => setShowWithdraw((v) => !v)}
+              className="mt-2 w-full text-center font-mono text-[10px] lowercase tracking-[0.2em] text-dim hover:text-ink"
             >
-              wipe local wallets
+              {showWithdraw ? "hide withdraw" : "withdraw"}
             </button>
+
+            {showWithdraw && (
+              <>
+                <div className="h-divider mt-6" />
+
+                <div className="mt-5">
+                  <span className="tag">withdraw</span>
+                  <p className="mt-2 text-[11px] text-muted">
+                    all testnet XLM in play and bank is sent to the destination. no tx hash
+                    shown here — it lands quietly.
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="g... destination address"
+                    value={dest}
+                    onChange={(e) => setDest(e.target.value.trim())}
+                    className="mt-3 w-full rounded-md border border-line bg-bg/40 px-3 py-2 font-mono text-xs text-ink outline-none focus:border-ink/60"
+                  />
+                  <button
+                    type="button"
+                    disabled={!destValid || phase === "withdrawing"}
+                    onClick={async () => {
+                      setPhase("withdrawing");
+                      await onWithdraw(dest);
+                      setPhase("idle");
+                      setDest("");
+                    }}
+                    className="pill pill-short mt-3 w-full justify-center py-2.5"
+                  >
+                    {phase === "withdrawing" ? "sending…" : "send all"}
+                  </button>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

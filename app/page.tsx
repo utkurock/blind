@@ -42,7 +42,7 @@ const HISTORY_LIMIT = 30;
 const PHASE = {
   assetSpinMs:    900,
   sideSpinMs:     500,
-  multSpinMs:     500,
+  multSpinMs:     3500,
   interStepMs:    2000,  // breath between each reveal step
   openHoldMs:     2000,  // trade visible after leverage locks
   pnlSuspenseMs:  3500,  // wait before revealing pnl (non-liq only)
@@ -218,11 +218,13 @@ export default function Page() {
             resolve();
             return;
           }
-          // noisy integer leverage in [100, 500], blended toward target
+          // noisy integer leverage in [100, 500], blended toward target only at the very end
           const noisy = 100 + Math.floor(Math.random() * 401);
-          const blended = Math.round(noisy * (1 - progress) + target * progress);
+          const blendWeight = progress < 0.85 ? 0 : (progress - 0.85) / 0.15;
+          const blended = Math.round(noisy * (1 - blendWeight) + target * blendWeight);
           setRevealMult(blended);
-          const interval = 55 + progress * progress * 180;
+          // fast throughout, mild ease-out at the tail so it visibly snaps onto a number
+          const interval = 32 + progress * progress * 70;
           setTimeout(tick, interval);
         };
         tick();
@@ -418,7 +420,7 @@ export default function Page() {
     [runCycle],
   );
 
-  const latest = useDrandRound(handleNewRound);
+  useDrandRound(handleNewRound);
 
   // when user resumes PLAY mid-buffer, kick a cycle if one is queued
   useEffect(() => {
@@ -539,15 +541,15 @@ export default function Page() {
             on stellar testnet
           </span>
           <span>
-            {latest ? (
-              <>
-                round <span className="text-ink">{latest.round}</span>
-                <span className="mx-2 text-dim/60">·</span>
-                <span className="text-ink">{latest.randomness.slice(2, 14)}…</span>
-              </>
-            ) : (
-              "connecting…"
-            )}
+            created by{" "}
+            <a
+              href="https://x.com/utkurocks"
+              target="_blank"
+              rel="noreferrer"
+              className="text-ink hover:opacity-70"
+            >
+              @utkurocks
+            </a>
           </span>
         </div>
       </footer>
