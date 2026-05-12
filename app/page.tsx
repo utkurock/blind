@@ -101,6 +101,11 @@ export default function Page() {
   playRef.current = play;
   bankRef.current = bank;
 
+  // when user pauses while idle, drop the trailing settled card so the panel resets
+  useEffect(() => {
+    if (!playing && !cycleRunningRef.current) setLastSettled(null);
+  }, [playing]);
+
   // Hydrate from localStorage
   useEffect(() => {
     setPlay(storage.getPlay());
@@ -394,6 +399,8 @@ export default function Page() {
       setRevealMult(null);
       setCurrentRound(null);
       cycleRunningRef.current = false;
+      // if user paused during the cycle, drop the settled card so the panel returns to the resting copy
+      if (!playingRef.current) setLastSettled(null);
 
       const buf = bufferedRoundRef.current;
       bufferedRoundRef.current = null;
@@ -505,7 +512,7 @@ export default function Page() {
         onOpenSpin={() => setSpinOpen(true)}
       />
 
-      <div className="grid flex-1 grid-cols-12 gap-3 px-3 pt-3 pb-4 sm:gap-4 sm:px-4 sm:pt-4 sm:pb-6 lg:overflow-hidden">
+      <div className="grid flex-1 grid-cols-12 gap-3 px-3 pt-3 pb-8 sm:gap-4 sm:px-4 sm:pt-4 sm:pb-10 lg:overflow-hidden lg:pb-8">
         <section className="col-span-12 flex flex-col gap-3 sm:gap-4 lg:col-span-8">
           <div className="panel-soft h-[44vh] overflow-hidden rounded-lg sm:h-[50vh] lg:h-auto lg:min-h-0 lg:flex-1">
             <Chart ref={chartRef} paletteId={paletteId} chartStyle={chartStyle} />
@@ -526,7 +533,7 @@ export default function Page() {
         </aside>
       </div>
 
-      <footer className="border-t border-line/60 px-4 pb-2 pt-3 sm:px-6">
+      <footer className="border-t border-line/60 px-4 pb-3 pt-4 sm:px-6 sm:pb-4 sm:pt-5">
         <div className="flex flex-col items-start justify-between gap-1 font-mono text-[10px] lowercase tracking-[0.2em] text-dim sm:flex-row sm:items-center sm:gap-0">
           <span>
             powered by{" "}

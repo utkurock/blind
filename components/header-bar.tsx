@@ -75,9 +75,9 @@ export function HeaderBar({
 
         <div className="flex w-full max-w-[16rem] flex-col lg:w-64">
           <div className="flex items-center justify-between">
-            <span className="label">risk</span>
+            <span className="label">r:r</span>
             <span className="font-mono text-xs text-ink">
-              {risk}/10 <span className="text-dim">·</span> {stake.toFixed(2)}
+              {risk}:100 <span className="text-dim">·</span> {stake.toFixed(2)}
             </span>
           </div>
           <button

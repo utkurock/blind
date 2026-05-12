@@ -191,23 +191,15 @@ export function SpinModal({ open, currentPalette, currentChartStyle, onClose, on
             const isHi = phase !== "ready" && idx === hiPalette;
             const isFinal = phase === "chose" && chosenPalette?.id === p.id;
             return (
-              <button
+              <div
                 key={p.id}
-                type="button"
-                disabled={phase === "spinning"}
-                onClick={() => {
-                  if (phase === "ready") {
-                    onApply(p, CHART_STYLES.find((s) => s.id === currentChartStyle) ?? CHART_STYLES[0]);
-                    onClose();
-                  }
-                }}
                 className={
                   "relative rounded-md border p-2 text-left transition " +
                   (isFinal
                     ? "border-ink/70 bg-ink/[0.06]"
                     : isHi
                     ? "border-ink/40 bg-ink/[0.04]"
-                    : "border-line/70 bg-bg/40 hover:border-ink/30")
+                    : "border-line/70 bg-bg/40")
                 }
                 style={{
                   transform: isHi && phase === "spinning" ? "scale(1.02)" : "scale(1)",
@@ -233,7 +225,7 @@ export function SpinModal({ open, currentPalette, currentChartStyle, onClose, on
                     </span>
                   )}
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -243,23 +235,15 @@ export function SpinModal({ open, currentPalette, currentChartStyle, onClose, on
             const isHi = phase !== "ready" && idx === hiStyle;
             const isFinal = phase === "chose" && chosenStyle?.id === s.id;
             return (
-              <button
+              <div
                 key={s.id}
-                type="button"
-                disabled={phase === "spinning"}
-                onClick={() => {
-                  if (phase === "ready") {
-                    onApply(PALETTES.find((p) => p.id === currentPalette) ?? PALETTES[0], s);
-                    onClose();
-                  }
-                }}
                 className={
                   "flex items-center gap-2 rounded-md border px-3 py-2 transition " +
                   (isFinal
                     ? "border-ink/70 bg-ink/[0.06] text-ink"
                     : isHi
                     ? "border-ink/40 bg-ink/[0.04] text-ink"
-                    : "border-line/70 bg-bg/40 text-ink/80 hover:border-ink/30")
+                    : "border-line/70 bg-bg/40 text-ink/80")
                 }
                 style={{
                   transform: isHi && phase === "spinning" ? "scale(1.02)" : "scale(1)",
@@ -273,7 +257,7 @@ export function SpinModal({ open, currentPalette, currentChartStyle, onClose, on
                     now
                   </span>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
